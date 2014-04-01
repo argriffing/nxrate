@@ -5,32 +5,49 @@ Utility functions.
 from __future__ import division, print_function, absolute_import
 
 
-###############################################################################
-# Validation of invariants related to stochastic processes.
+def dict_argmin(d):
+    if None in d:
+        raise Exception('the support should not contain None')
+    min_k = None
+    min_v = None
+    for k, v in d.items():
+        if min_k is None or v < min_v:
+            min_k = k
+            min_v = v
+    return min_k
 
-def assert_stochastic_vector(v):
-    if np.any(v < 0) or np.any(1 < v):
-        raise Exception(
-                'entries of a finite distribution vector should be in '
-                'the inclusive interval [0, 1] '
-                'min: %s  max: %s' % (min(v), max(v)))
-    if not np.allclose(np.sum(v), 1):
-        raise Exception(
-                'entries of a finite distribution vector should sum to 1')
 
-def assert_rate_matrix(Q):
-    if not np.allclose(np.sum(Q, axis=1), 0):
-        raise Exception('expected rate matrix rows to sum to zero')
-    if np.any(np.diag(Q) > 0):
-        raise Exception('expected rate matrix diagonals to be non-positive')
-    if np.any(Q - np.diag(np.diag(Q)) < 0):
-        raise Exception('expected rate matrix off-diagonals to be non-negative')
+def dict_argmax(d):
+    if None in d:
+        raise Exception('the support should not contain None')
+    max_k = None
+    max_v = None
+    for k, v in d.items():
+        if max_k is None or v > max_v:
+            max_k = k
+            max_v = v
+    return max_k
 
-def assert_equilibrium(Q, distn):
-    if not np.allclose(np.dot(distn, Q), 0):
-        raise Exception('the distribution is not at equilibrium')
 
-def assert_detailed_balance(Q, distn):
-    S = (Q.T * distn).T
-    if not np.allclose(S, S.T):
-        raise Exception('the detailed balance equations are not met')
+def nxdistn_to_distn(nxdistn):
+    d = {}
+    for edge in nxdistn.edges():
+        a, b = edge
+        d[a, b] = nxdistn[a][b]['weight']
+    return d
+
+
+def get_directed_flow_graph(Q, distn):
+    """
+    Compute the pairwise directed flows between vertices.
+
+    This is a helper function for checking equilibrium and detailed balance.
+
+    """
+    R = nx.DiGraph()
+    for sa, sb in Q.edges():
+        if sa in distn:
+            flow = distn[sa] * Q[sa][sb]['weight']
+            R.add_edge(sa, sb, weight=flow)
+    return R
+
