@@ -18,6 +18,7 @@ from nxrate.util import (
 from nxrate.testing import (
         assert_detailed_balance, assert_equilibrium,
         UnweightedDetailedBalanceError, WeightedDetailedBalanceError,
+        UnweightedEquilibriumError, WeightedEquilibriumError,
         )
 
 
@@ -53,6 +54,8 @@ def _check_bad_distn_random_symmetric_dense_Q(states):
     np.random.seed(1234)
     distn = get_random_binom_distn(states)
     Q = get_random_symmetric_dense_Q(states)
+    assert_raises(WeightedEquilibriumError, assert_equilibrium,
+            Q, distn)
     assert_raises(WeightedDetailedBalanceError, assert_detailed_balance,
             Q, distn)
 
@@ -61,6 +64,8 @@ def _check_bad_distn_random_symmetric_sparse_Q(states):
     np.random.seed(1234)
     distn = get_random_binom_distn(states)
     Q = get_random_symmetric_sparse_Q(states)
+    assert_raises(WeightedEquilibriumError, assert_equilibrium,
+            Q, distn)
     assert_raises(WeightedDetailedBalanceError, assert_detailed_balance,
             Q, distn)
 
