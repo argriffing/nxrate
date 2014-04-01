@@ -39,16 +39,18 @@ def _check_ok_random_symmetric_dense_Q(states):
     np.random.seed(1234)
     distn = get_uniform_distn(states)
     Q = get_random_symmetric_dense_Q(states)
-    assert_equilibrium(Q, distn)
-    assert_detailed_balance(Q, distn)
+    for check_inputs in False, True:
+        assert_equilibrium(Q, distn, check_inputs=check_inputs)
+        assert_detailed_balance(Q, distn, check_inputs=check_inputs)
 
 
 def _check_ok_random_symmetric_sparse_Q(states):
     np.random.seed(1234)
     distn = get_uniform_distn(states)
     Q = get_random_symmetric_dense_Q(states)
-    assert_equilibrium(Q, distn)
-    assert_detailed_balance(Q, distn)
+    for check_inputs in False, True:
+        assert_equilibrium(Q, distn, check_inputs=check_inputs)
+        assert_detailed_balance(Q, distn, check_inputs=check_inputs)
 
 
 def _check_bad_distn_random_symmetric_dense_Q(states):

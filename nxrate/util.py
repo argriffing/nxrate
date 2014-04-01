@@ -9,6 +9,7 @@ from itertools import combinations
 import random
 
 import networkx as nx
+import scipy.stats
 
 
 def isclose(a, b, rtol=1e-5, atol=1e-8):
@@ -24,11 +25,10 @@ def isclose(a, b, rtol=1e-5, atol=1e-8):
 def get_uniform_distn(states):
     states = set(states)
     nstates = len(states)
-    if nstates:
-        p = 1 / nstates
-        return dict((s, p) for s in states)
-    else:
-        return dict()
+    if not nstates:
+        raise Exception('the distribution has empty support')
+    p = 1 / nstates
+    return dict((s, p) for s in states)
 
 
 def get_random_sparse_uniform_distn(states, nzeros=1):
@@ -76,7 +76,6 @@ def get_random_symmetric_sparse_Q(states, nzeros=1):
 
 
 def get_random_binom_distn(states, p=0.4):
-    import scipy.stats
     states = list(set(states))
     random.shuffle(states)
     n = len(states) - 1
@@ -138,7 +137,9 @@ def get_marginal_flows(R):
     """
     Compute total flows into and out of vertices.
 
-    Note that this is like weighted vertex degrees, but sparser.
+    Note that this is like weighted networkx DiGraph.in_degree
+    and DiGraph.out_degree, but the dicts constructed by this function
+    may be sparser because some flows that are zero may not be included.
 
     """
     flow_in = defaultdict(float)
