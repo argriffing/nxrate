@@ -137,4 +137,13 @@ def test_asymmetric_sparse_distn_equilibrium():
     assert_detailed_balance(Q, distn)
 
 
+def test_bad_distn_symmetric_rates():
+    # This example uses dense symmetric rates and a sparse distribution.
+    for states in list('abc'), list('ab'):
+        distn = get_random_sparse_uniform_distn(states)
+        Q = get_random_symmetric_dense_Q(states)
+        assert_raises(UnweightedEquilibriumError, assert_equilibrium,
+                Q, distn)
+        assert_raises(UnweightedDetailedBalanceError, assert_detailed_balance,
+                Q, distn)
 

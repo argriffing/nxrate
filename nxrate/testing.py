@@ -107,7 +107,7 @@ def assert_equilibrium(Q, distn, check_inputs=True):
     # Check that each state with flow in also has flow out.
     imba = set(flow_in) - set(flow_out)
     if imba:
-        raise UnweightedEqulibriumError('the following states have flow in '
+        raise UnweightedEquilibriumError('the following states have flow in '
                 'but not out: %s' % str(imba))
 
     # Check that the net flow out of each vertex is negligible.
