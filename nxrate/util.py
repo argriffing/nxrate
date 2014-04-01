@@ -4,6 +4,87 @@ Utility functions.
 """
 from __future__ import division, print_function, absolute_import
 
+from itertools import combinations
+import random
+
+import networkx as nx
+
+
+def isclose(a, b, rtol=1e-5, atol=1e-8):
+    """
+    For assertion use rtol=1e-7 atol=0 instead.
+    Following numpy, the relative difference (rtol * abs(b)) and
+    the absolute difference atol are added together to compare
+    against the absolute difference between a and b.
+    """
+    return abs(a - b) <= (atol + rtol * abs(b))
+
+
+def get_uniform_distn(states):
+    states = set(states)
+    nstates = len(states)
+    if nstates:
+        p = 1 / nstates
+        return dict((s, p) for s in states)
+    else:
+        return dict()
+
+
+def get_random_sparse_uniform_distn(states, nzeros=1):
+    """
+    States with positive probability have equal probability.
+    """
+    states = list(set(states))
+    random.shuffle(states)
+    npositive = len(states) - nzeros
+    d = {}
+    for i, state in enumerate(states):
+        if i < nzeros:
+            continue
+        else:
+            p = 1 / npositive
+            d[state] = p
+    return d
+
+
+def get_random_symmetric_dense_Q(states):
+    """
+    Use a networkx DiGraph even though the rate matrix is dense.
+    """
+    states = list(set(states))
+    random.shuffle(states)
+    Q = nx.DiGraph()
+    for sa, sb in combinations(states, 2):
+        rate = 10 * random.random()
+        Q.add_edge(sa, sb, weight=rate)
+        Q.add_edge(sb, sa, weight=rate)
+    return Q
+
+
+def get_random_symmetric_sparse_Q(states, nzeros=1):
+    states = list(set(states))
+    random.shuffle(states)
+    Q = nx.DiGraph()
+    for i, (sa, sb) in enumerate(combinations(states, 2)):
+        if i < nzeros:
+            continue
+        rate = 10 * random.random()
+        Q.add_edge(sa, sb, weight=rate)
+        Q.add_edge(sb, sa, weight=rate)
+    return Q
+
+
+def get_random_binom_distn(states, p=0.4):
+    import scipy.stats
+    states = list(set(states))
+    random.shuffle(states)
+    n = len(states) - 1
+    d = {}
+    rv = scipy.stats.binom(n, p)
+    for k, state in enumerate(states):
+        d[state] = rv.pmf(k)
+    return d
+
 
 def dict_argmin(d):
     if None in d:
