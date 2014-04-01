@@ -20,7 +20,7 @@ from .util import (dict_argmin, dict_argmax,
         get_directed_flow_graph, get_marginal_flows)
 
 __all__ = [
-        'assert_distn', 'assert_nxdistn',
+        'assert_distn', 'assert_nxdistn', 'assert_rate_matrix',
         'assert_equilibrium', 'assert_detailed_balance',
         ]
 
