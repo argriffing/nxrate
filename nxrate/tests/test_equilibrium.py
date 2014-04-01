@@ -121,3 +121,20 @@ def test_unweighted_equilibrium_error():
     assert_raises(UnweightedDetailedBalanceError, assert_detailed_balance,
             Q, distn)
 
+def test_asymmetric_sparse_distn_equilibrium():
+    states = list('abc')
+    distn = {
+            'a' : 0.5,
+            'b' : 0.5}
+    Q = nx.DiGraph()
+    Q.add_weighted_edges_from([
+        ('a', 'b', 2),
+        ('b', 'a', 2),
+        ('c', 'a', 3),
+        ('c', 'b', 4),
+        ])
+    assert_equilibrium(Q, distn)
+    assert_detailed_balance(Q, distn)
+
+
+
