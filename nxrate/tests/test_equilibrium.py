@@ -91,3 +91,17 @@ def test_bad_distn_random_symmetric_sparse_Q():
         if len(set(states)) > 2:
             yield _check_bad_distn_random_symmetric_sparse_Q, states
 
+
+def test_equilibrium_but_not_detailed_balance():
+    states = list('abcd')
+    distn = get_uniform_distn(states)
+    Q = nx.DiGraph()
+    Q.add_weighted_edges_from([
+        ('a', 'b', 2),
+        ('b', 'c', 2),
+        ('c', 'd', 2),
+        ('d', 'a', 2),
+        ])
+    assert_raises(UnweightedDetailedBalanceError, assert_detailed_balance,
+            Q, distn)
+    assert_equilibrium(Q, distn)
