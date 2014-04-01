@@ -16,7 +16,8 @@ import random
 import scipy.stats
 
 from .util import (dict_argmin, dict_argmax,
-        nxdistn_to_distn, get_directed_flow_graph, isclose)
+        nxdistn_to_distn, isclose,
+        get_directed_flow_graph, get_marginal_flows)
 
 __all__ = [
         'assert_distn', 'assert_nxdistn',
@@ -95,8 +96,7 @@ def assert_equilibrium(Q, distn, check_inputs=True):
     R = get_directed_flow_graph(Q, distn)
 
     # Compute the flow into and out of each state.
-    flow_in = R.in_degree(weight='weight')
-    flow_out = R.out_degree(weight='weight')
+    flow_in, flow_out = get_marginal_flows(R)
 
     # Check that each state with flow out also has flow in.
     imba = set(flow_out) - set(flow_in)

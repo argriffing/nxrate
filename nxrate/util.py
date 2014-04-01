@@ -4,6 +4,7 @@ Utility functions.
 """
 from __future__ import division, print_function, absolute_import
 
+from collections import defaultdict
 from itertools import combinations
 import random
 
@@ -131,4 +132,21 @@ def get_directed_flow_graph(Q, distn):
             flow = distn[sa] * Q[sa][sb]['weight']
             R.add_edge(sa, sb, weight=flow)
     return R
+
+
+def get_marginal_flows(R):
+    """
+    Compute total flows into and out of vertices.
+
+    Note that this is like weighted vertex degrees, but sparser.
+
+    """
+    flow_in = defaultdict(float)
+    flow_out = defaultdict(float)
+    for sa, sb in R.edges():
+        flow = R[sa][sb]['weight']
+        flow_in[sb] += flow
+        flow_out[sa] += flow
+    return flow_in, flow_out
+
 

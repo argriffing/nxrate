@@ -10,7 +10,8 @@ from numpy.testing import assert_raises
 
 import nxrate
 from nxrate.util import (
-        get_uniform_distn, get_random_binom_distn,
+        get_uniform_distn,
+        get_random_binom_distn,
         get_random_symmetric_dense_Q,
         get_random_symmetric_sparse_Q,
         get_random_sparse_uniform_distn,
@@ -105,3 +106,18 @@ def test_equilibrium_but_not_detailed_balance():
     assert_raises(UnweightedDetailedBalanceError, assert_detailed_balance,
             Q, distn)
     assert_equilibrium(Q, distn)
+
+
+def test_unweighted_equilibrium_error():
+    states = list('abc')
+    distn = get_uniform_distn(states)
+    Q = nx.DiGraph()
+    Q.add_weighted_edges_from([
+        ('a', 'b', 2),
+        ('b', 'c', 2),
+        ])
+    assert_raises(UnweightedEquilibriumError, assert_equilibrium,
+            Q, distn)
+    assert_raises(UnweightedDetailedBalanceError, assert_detailed_balance,
+            Q, distn)
+
